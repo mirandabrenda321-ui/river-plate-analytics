@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import os
 
 def transform_data():
@@ -43,8 +44,14 @@ def transform_data():
     # Aplicamos la transformación fila por fila
     df['fecha'] = df.apply(procesar_fecha_completa, axis=1)
 
+
+
     # Limpieza final de columnas
+    # Aseguramos que cualquier valor nulo, None o vacío se convierta en '-'
+    df['g_river'] = df['g_river'].replace([np.nan, None, 'None', ''], '-')
     df['g_river'] = df['g_river'].fillna('-')
+    
+    df['g_rival'] = df['g_rival'].replace([np.nan, None, 'None', ''], '-')
     df['g_rival'] = df['g_rival'].fillna('-')
 
     # Ordenar cronológicamente
