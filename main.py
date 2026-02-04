@@ -1,22 +1,17 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px  # <-- ESTA LÍNEA CORRIGE EL ERROR
+import plotly.express as px
 from sqlalchemy import create_engine
 import os
 from scripts.extract import extract_river_scraping
 from scripts.transform import transform_data
 from scripts.load import load_to_sql
+from database import get_db_engine
 from datetime import datetime
 
-# Configuración de la DB
-DB_HOST = os.getenv("DB_HOST", "db")
-DB_NAME = os.getenv("DB_NAME", "river_plate_db")
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASS = os.getenv("DB_PASSWORD", "admin123")
-DB_PORT = os.getenv("DB_PORT", "5432")
-
+# DB Connection handled by database.py
 def get_engine():
-    return create_engine(f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+    return get_db_engine()
 
 st.set_page_config(page_title="River Plate Analytics", page_icon="⚪🔴", layout="wide")
 
