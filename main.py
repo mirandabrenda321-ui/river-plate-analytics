@@ -4,7 +4,9 @@ import plotly.express as px
 from sqlalchemy import create_engine
 import os
 from scripts.extract import extract_river_scraping
+from scripts.extract_players import extract_river_players
 from scripts.transform import transform_data
+from scripts.transform_players import transform_players
 from scripts.load import load_to_sql
 from database import get_db_engine
 from datetime import datetime
@@ -77,8 +79,15 @@ with st.sidebar:
     # Aquí iría tu botón de ETL
     if st.button('🚀 Actualizar Datos (ETL)'):
         with st.spinner('Procesando datos...'):
+            # Match Data
             extract_river_scraping()
             transform_data()
+            
+            # Feature: Squad/Plantel Data
+            extract_river_players()
+            transform_players()
+            
+            # Load all
             load_to_sql()
             st.success('¡Datos actualizados!')
 
