@@ -76,20 +76,26 @@ with st.sidebar:
     
     st.markdown("---") # Una línea divisora para separar el logo de los botones
     
-    # Aquí iría tu botón de ETL
-    if st.button('🚀 Actualizar Datos (ETL)'):
-        with st.spinner('Procesando datos...'):
-            # Match Data
-            extract_river_scraping()
-            transform_data()
-            
-            # Feature: Squad/Plantel Data
-            extract_river_players()
-            transform_players()
-            
-            # Load all
-            load_to_sql()
-            st.success('¡Datos actualizados!')
+    # Botón de ETL: Oculto en producción
+    env = os.getenv("ENVIRONMENT", "dev") # Default a dev por seguridad local
+    
+    if env == "prod":
+        st.info("🔒 Modo Producción")
+    else:
+        # Aquí iría tu botón de ETL
+        if st.button('🚀 Actualizar Datos (ETL)'):
+            with st.spinner('Procesando datos...'):
+                # Match Data
+                extract_river_scraping()
+                transform_data()
+                
+                # Feature: Squad/Plantel Data
+                extract_river_players()
+                transform_players()
+                
+                # Load all
+                load_to_sql()
+                st.success('¡Datos actualizados!')
 
 # --- Lógica de Datos ---
 try:

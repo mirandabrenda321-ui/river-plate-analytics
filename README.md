@@ -1,32 +1,43 @@
+
 # ⚪🔴 River Plate Analytics Dashboard ⚪🔴
 
-Este proyecto es un dashboard de análisis de datos interactivo construido con Python (Streamlit), SQL y Docker, enfocado en seguir el rendimiento del Club Atlético River Plate durante la temporada 2026.
+Este proyecto es un dashboard de análisis de datos interactivo construido con **Python (Streamlit)**, **SQL** y **Docker**, enfocado en seguir el rendimiento del Club Atlético River Plate durante la temporada 2026.
 
-La aplicación web presenta datos detallados sobre los partidos, resultados, y estadísticas clave, proporcionando una visión completa del desempeño del equipo en las diferentes competiciones.
+La aplicación integra datos de partidos (fixture y resultados) y del plantel profesional, proporcionando visualizaciones avanzadas y KPIs de rendimiento.
 
 ## ✨ Características Principales
 
-- **Visualización de Calendario:** Muestra los próximos partidos y los ya jugados, organizados por competición (Liga Profesional, Copa Argentina, Amistosos, etc).
-- **Resultados con Semáforo:** Utiliza un sistema de colores (verde para victoria, amarillo para empate, rojo para derrota) para una rápida identificación de los resultados.
-- **Análisis Estadístico:**
-  - **Puntos por Torneo:** Métricas que resumen los puntos obtenidos en cada competición.
-  - **Distribución de Resultados:** Gráficos de torta y barras que muestran el porcentaje y la cantidad de victorias, empates y derrotas.
-  - **KPIs de Rendimiento:** Métricas como el promedio de goles a favor y la cantidad de partidos con valla invicta.
-- **ETL Integrado:** Un botón en la barra lateral permite ejecutar un proceso de **Extract, Transform, Load (ETL)** para actualizar los datos desde la fuente original mediante web scraping.
+### 📅 Agenda y Resultados
+- **Calendario Completo:** Visualización de partidos por competición (Liga, Copas, Amistoso, etc).
+- **Semáforo de Resultados:** Identificación rápida (✅ Ganó, ⚠️ Empató, ❌ Perdió).
+- **KPIs:** Promedio de goles, vallas invictas y puntos por torneo.
+
+### ⚽ Plantel Profesional
+- **Fichas de Jugadores:** Tabla interactiva con fotos, dorsales, posición y nacionalidad.
+- **Estadísticas de Rendimiento:**
+  - Goles, Tarjetas Amarillas y Rojas.
+  - Gráficos de torta/anillo con los goles y amonestados.
+- **Datos Biométricos:**
+  - Distribución de Edad, Altura y Peso del equipo.
+- **Identidad Visual:** Gráficos personalizados con la paleta de colores oficial del club.
+
+### 🚀 Ingeniería de Datos (ETL)
+- **Web Scraping:** Scripts en Python (`Match` y `Player` scrapers) que extraen datos en tiempo real.
+- **Base de Datos:** Almacenamiento estructurado en **PostgreSQL**.
 
 ## 🛠️ Tecnologías Utilizadas
 
-- **Backend:** Python
-- **Dashboard:** Streamlit
-- **Base de Datos:** PostgreSQL
-- **Contenerización:** Docker & Docker Compose
-- **Web Scraping:** BeautifulSoup y Requests
-- **Análisis de Datos:** Pandas
-- **Visualización de Datos:** Plotly Express
+- **Backend:** Python 3.11
+- **Frontend:** Streamlit
+- **Base de Datos:** PostgreSQL 15
+- **Infraestructura:** Docker & Docker Compose
+- **Librerías Clave:**
+  - `pandas` (Manipulación de datos)
+  - `plotly` (Gráficos interactivos)
+  - `beautifulsoup4` (Web Scraping)
+  - `sqlalchemy` (ORM SQL)
 
 ## 🚀 Cómo Empezar
-
-Para ejecutar este proyecto en tu entorno local, necesitarás tener Docker instalado.
 
 ### 1. Clonar el Repositorio
 
@@ -37,8 +48,7 @@ cd river-plate-analytics
 
 ### 2. Configurar Variables de Entorno
 
-Crea un archivo `.env` en la raíz del proyecto, basándote en el archivo `.env.template` o usando la siguiente plantilla. Estos valores deben coincidir con los de `docker-compose.yml`.
-
+Crea un archivo `.env` en la raíz (podés usar `.env.template` como base):
 ```env
 DB_HOST=db
 DB_NAME=river_plate_db
@@ -47,39 +57,42 @@ DB_PASSWORD=admin123
 DB_PORT=5432
 ```
 
-### 3. Levantar los Contenedores
+### 3. Ejecutar con Docker
 
-Desde la raíz del proyecto, ejecuta el siguiente comando para construir y levantar los servicios de la base de datos y el dashboard:
+Construye y levanta los servicios (App + Base de Datos):
 
 ```bash
-docker-compose up --build
+docker-compose up -d --build
 ```
 
-- El servicio de la base de datos PostgreSQL estará disponible en el puerto `5432`.
-- El dashboard de Streamlit será accesible desde tu navegador en **http://localhost:8501**.
+- **Dashboard:** http://localhost:8501
+- **Base de Datos:** localhost:5432
 
-##  Uso
+### 4. Cargar Datos Iniciales
 
-1.  **Accede al Dashboard:** Abre tu navegador y ve a `http://localhost:8501`.
-2.  **Actualiza los Datos:** Al ser la primera vez que ejecutas la aplicación, la base de datos estará vacía. Haz clic en el botón **🚀 Actualizar Datos (ETL)** en la barra lateral izquierda para iniciar el proceso de web scraping y poblar la base de datos.
-3.  **Explora los Datos:** Una vez que los datos estén cargados, podrás navegar por las pestañas "📅 AGENDA POR COMPETICIÓN" y "📊 ANÁLISIS ESTADÍSTICO" para explorar el rendimiento del equipo.
+Al iniciar por primera vez, la base de datos estará vacía.
+1. Ve al dashboard en el navegador.
+2. En la barra lateral, presiona el botón **🚀 Actualizar Datos (ETL)**.
+3. Espera a que finalice el proceso de scraping y carga.
 
 ## 📂 Estructura del Proyecto
 
 ```
 /river-plate-analytics
-├── .env                # Archivo para variables de entorno (no versionado)
-├── .gitignore          # Archivos y carpetas ignorados por Git
-├── Dockerfile          # Define la imagen de Docker para la app de Streamlit
-├── README.md           # Documentación del proyecto
-├── data/               # (Opcional) Almacenamiento de datos crudos o procesados
-├── docker-compose.yml  # Orquesta los servicios de la base de datos y el dashboard
-├── main.py             # Script principal de la aplicación Streamlit
-├── requirements.txt    # Dependencias de Python
-├── scripts/
-│   ├── extract.py      # Módulo para extraer datos (web scraping)
-│   ├── transform.py    # Módulo para transformar los datos extraídos
-│   └── load.py         # Módulo para cargar los datos en la base de datos
+├── .env                # Credenciales (no versionado)
+├── docker-compose.yml  # Orquestación de servicios
+├── Dockerfile          # Imagen de la app
+├── main.py             # App principal de Streamlit
+├── database.py         # Conexión a DB
+├── scripts/            # Módulos ETL
+│   ├── extract.py            # Scraping de Partidos
+│   ├── extract_players.py    # Scraping de Plantel
+│   ├── transform.py          # Limpieza de Partidos
+│   ├── transform_players.py  # Limpieza de Plantel
+│   └── load.py               # Carga a SQL
 └── sql/
-    └── init_db.sql     # Script SQL para inicializar la estructura de la tabla
+    └── init_db.sql     # Script inicial
 ```
+
+---
+*Vamos River Plate⚪🔴⚪*
