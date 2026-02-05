@@ -5,6 +5,9 @@ Este proyecto es un dashboard de análisis de datos interactivo construido con *
 
 La aplicación integra datos de partidos (fixture y resultados) y del plantel profesional, proporcionando visualizaciones avanzadas y KPIs de rendimiento.
 
+## Vista previa:
+⚪🔴 https://river-plate-analytics-brenda-miranda.streamlit.app/
+
 ## ✨ Características Principales
 
 ### 📅 Agenda y Resultados
