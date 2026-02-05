@@ -21,12 +21,18 @@ def load_to_sql():
     engine = get_db_engine()
     
     # Leer el CSV limpio
-    df = pd.read_csv('data/river_cleaned.csv')
+    if os.path.exists('data/river_cleaned.csv'):
+        df = pd.read_csv('data/river_cleaned.csv')
+        df.to_sql('partidos_river', engine, if_exists='replace', index=False)
+        print("✅ Tabla 'partidos_river' actualizada.")
     
-    # Cargar a la tabla (reemplaza si existe)
-    df.to_sql('partidos_river', engine, if_exists='replace', index=False)
-    
-    print("¡Carga completada exitosamente!")
+    # Cargar Plantilla
+    if os.path.exists('data/river_players_cleaned.csv'):
+        df_players = pd.read_csv('data/river_players_cleaned.csv')
+        df_players.to_sql('plantilla_river', engine, if_exists='replace', index=False)
+        print("✅ Tabla 'plantilla_river' actualizada.")
+
+    print("✅ Carga a base de datos exitosa.")
 
 if __name__ == "__main__":
     load_to_sql()

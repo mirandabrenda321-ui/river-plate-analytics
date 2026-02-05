@@ -90,7 +90,7 @@ try:
     if not df.empty:
         df['fecha'] = pd.to_datetime(df['fecha'])
         
-        tab1, tab2 = st.tabs(["📅 AGENDA POR COMPETICIÓN", "📊 ANÁLISIS ESTADÍSTICO"])
+        tab1, tab2, tab3 = st.tabs(["📅 AGENDA POR COMPETICIÓN", "📊 ANÁLISIS ESTADÍSTICO", "⚽ PLANTEL"])
 
         with tab1:
             st.header("Calendario River Plate 2026")
@@ -192,6 +192,127 @@ try:
                     st.metric("Partidos con Valla Invicta", vallas)
             else:
                 st.warning("No hay datos de partidos jugados para generar estadísticas.")
+
+        with tab3:
+            st.header("Plantel 2026")
+            try:
+                df_players = pd.read_sql("SELECT * FROM plantilla_river", engine)
+                
+                if not df_players.empty:
+                    # Configuración de columnas
+                    st.dataframe(
+                        df_players[['dorsal', 'imagen', 'nombre', 'posicion', 'edad', 'bandera', 'altura', 'peso', 'goles', 'amarillas', 'rojas']],
+                        column_config={
+                            "imagen": st.column_config.ImageColumn("Foto", width="small"),
+                            "dorsal": st.column_config.TextColumn("N°", width="small"),
+                            "nombre": st.column_config.TextColumn("Jugador", width="medium"),
+                            "posicion": "Posición",
+                            "edad": "Edad",
+                            "bandera": st.column_config.ImageColumn("Nacionalidad", width="small"),
+                            "altura": "Altura (cm)",
+                            "peso": "Peso (kg)",
+                            "goles": "⚽ Goles",
+                            "amarillas": "🟨 Amarillas",
+                            "rojas": "🟥 Rojas"
+                        },
+                        hide_index=True,
+                        use_container_width=True,
+                        height=600
+                    )
+
+                    st.divider()
+                    
+                    # --- Dimensiones Físicas (Histogramas) ---
+                    st.subheader("📊 Físico y Edad")
+                    
+                    # Limpieza de datos visuales
+                    df_stats = df_players.copy()
+                    df_stats['edad'] = pd.to_numeric(df_stats['edad'], errors='coerce')
+                    df_stats['altura'] = pd.to_numeric(df_stats['altura'], errors='coerce')
+                    df_stats['peso'] = pd.to_numeric(df_stats['peso'], errors='coerce')
+                    
+                    c1, c2, c3 = st.columns(3)
+                    
+                    with c1:
+                        fig_edad = px.histogram(df_stats, x="edad", title="Edad", 
+                                              nbins=10, color_discrete_sequence=['#ED1C24'],
+                                              labels={'count':'Cantidad'})
+                        fig_edad.update_layout(bargap=0.2, yaxis_title="Cantidad")
+                        st.plotly_chart(fig_edad, use_container_width=True)
+                        
+                    with c2:
+                        fig_alt = px.histogram(df_stats, x="altura", title="Altura (cm)", 
+                                             nbins=10, color_discrete_sequence=['#333333'],
+                                             labels={'count':'Cantidad'})
+                        fig_alt.update_layout(bargap=0.2, yaxis_title="Cantidad")
+                        st.plotly_chart(fig_alt, use_container_width=True)
+
+                    with c3:
+                        fig_peso = px.histogram(df_stats, x="peso", title="Peso (kg)", 
+                                              nbins=10, color_discrete_sequence=['#B0B0B0'],
+                                              labels={'count':'Cantidad'})
+                        fig_peso.update_layout(bargap=0.2, yaxis_title="Cantidad")
+                        st.plotly_chart(fig_peso, use_container_width=True)
+
+                    st.divider()
+
+                    # --- Rendimiento (Donut Charts) ---
+                    st.subheader("⚽ Rendimiento: Goles y Tarjetas")
+                    
+                    # Convertir a numérico por seguridad
+                    df_stats['goles'] = pd.to_numeric(df_stats['goles'], errors='coerce').fillna(0)
+                    df_stats['amarillas'] = pd.to_numeric(df_stats['amarillas'], errors='coerce').fillna(0)
+                    df_stats['rojas'] = pd.to_numeric(df_stats['rojas'], errors='coerce').fillna(0)
+
+                    # Total por equipo
+                    total_goles = df_stats['goles'].sum()
+                    total_amarillas = df_stats['amarillas'].sum()
+                    total_rojas = df_stats['rojas'].sum()
+
+                    kpi1, kpi2, kpi3 = st.columns(3)
+                    kpi1.metric("Goles Totales", int(total_goles))
+                    kpi2.metric("Tarjetas Amarillas", int(total_amarillas))
+                    kpi3.metric("Tarjetas Rojas", int(total_rojas))
+
+                    # Gráficos de Torta/Anillo - Top Jugadores
+                    row_charts = st.columns(3)
+                    
+                    # Definir paleta River: Rojo, Negro, Gris Oscuro, Gris Claro, Rojo Oscuro
+                    palette_river = ['#ED1C24', '#333333', '#808080', '#B0B0B0', '#8B0000']
+
+                    # 1. Goles (Top goleadores)
+                    df_goles = df_stats[df_stats['goles'] > 0].sort_values('goles', ascending=False)
+                    if not df_goles.empty:
+                        fig_gol = px.pie(df_goles, values='goles', names='nombre', title='Distribución de Goles',
+                                         hole=0.4, color_discrete_sequence=palette_river)
+                        row_charts[0].plotly_chart(fig_gol, use_container_width=True)
+                    else:
+                        row_charts[0].info("Sin goles registrados")
+
+                    # 2. Amarillas
+                    df_am = df_stats[df_stats['amarillas'] > 0]
+                    if not df_am.empty:
+                        fig_am = px.pie(df_am, values='amarillas', names='nombre', title='Tarjetas Amarillas',
+                                        hole=0.4, color_discrete_sequence=['#FFD700', '#F0E68C', '#BDB76B'])
+                        row_charts[1].plotly_chart(fig_am, use_container_width=True)
+                    else:
+                        row_charts[1].info("Sin amarillas registradas")
+
+                    # 3. Rojas
+                    df_rj = df_stats[df_stats['rojas'] > 0]
+                    if not df_rj.empty:
+                        fig_rj = px.pie(df_rj, values='rojas', names='nombre', title='Tarjetas Rojas',
+                                        hole=0.4, color_discrete_sequence=['#FF0000', '#8B0000'])
+                        row_charts[2].plotly_chart(fig_rj, use_container_width=True)
+                    else:
+                        row_charts[2].info("Sin rojas registradas")
+
+                else:
+                    st.info("No hay datos de plantilla disponibles.")
+            
+            except Exception as e:
+                # Si la tabla no existe aún
+                st.error(f"Error cargando plantilla: {e}")
 
     else:
         st.info("La base de datos está vacía. Ejecuta el ETL en la barra lateral.")
