@@ -114,9 +114,12 @@ with st.sidebar:
                 st.sidebar.markdown(f"📅 **Actualizado:** {last_update}")
             else:
                  st.sidebar.caption("📅 Actualizado: Desconocido")
-    except Exception:
-        # Si la tabla no existe aún
-        pass
+    except Exception as e:
+        # Si la tabla no existe o hay error de conexión
+        st.sidebar.caption("📅 Actualizado: Pendiente de carga")
+        # Opcional: mostrar error en logs si es dev
+        if env == 'dev':
+            print(f"DEBUG: Error metadata -> {e}")
 
 # --- Lógica de Datos ---
 try:
