@@ -99,3 +99,21 @@ Al iniciar por primera vez, la base de datos estará vacía.
 
 ---
 *Vamos River Plate⚪🔴⚪*
+
+## 🤖 Automatización con GitHub Actions
+
+Este proyecto incluye un flujo de trabajo de GitHub Actions para ejecutar el proceso ETL automáticamente todos los días.
+
+### Configuración de Secretos
+
+Para que la automatización funcione, necesitas configurar las siguientes credenciales en los "Secrets" de tu repositorio en GitHub (Settings > Secrets and variables > Actions):
+
+| Nombre del Secreto | Descripción |
+|--------------------|-------------|
+| `DB_HOST`          | Host de tu base de datos (ej. Supabase) |
+| `DB_NAME`          | Nombre de la base de datos (ej. `postgres`) |
+| `DB_USER`          | Usuario de la base de datos (ej. `postgres`) |
+| `DB_PASSWORD`      | Contraseña de la base de datos |
+| `DB_PORT`          | Puerto de la base de datos (ej. `5432` o `6543`) |
+
+El workflow se ejecutará automáticamente todos los días a las 00:00 UTC, o puedes ejecutarlo manualmente desde la pestaña "Actions" en GitHub.
