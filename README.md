@@ -104,7 +104,7 @@ Al iniciar por primera vez, la base de datos estará vacía.
 
 Este proyecto incluye un flujo de trabajo de GitHub Actions para ejecutar el proceso ETL automáticamente todos los días.
 
-### Configuración de Secretos
+### Configuración de Secrets
 
 Para que la automatización funcione, necesitas configurar las siguientes credenciales en los "Secrets" de tu repositorio en GitHub (Settings > Secrets and variables > Actions):
 
@@ -116,4 +116,4 @@ Para que la automatización funcione, necesitas configurar las siguientes creden
 | `DB_PASSWORD`      | Contraseña de la base de datos |
 | `DB_PORT`          | Puerto de la base de datos (ej. `5432` o `6543`) |
 
-El workflow se ejecutará automáticamente todos los días a las 00:00 UTC, o puedes ejecutarlo manualmente desde la pestaña "Actions" en GitHub.
+El workflow se ejecutará automáticamente todos los días a las 00:00 UTC, o podés ejecutarlo manualmente desde la pestaña "Actions" en GitHub.

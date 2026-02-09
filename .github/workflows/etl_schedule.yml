@@ -1,4 +1,4 @@
-name: Weekly River Plate ETL
+name: Daily River Plate ETL
 
 on:
   schedule:
