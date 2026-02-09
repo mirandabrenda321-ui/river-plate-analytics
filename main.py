@@ -96,6 +96,27 @@ with st.sidebar:
                 # Load all
                 load_to_sql()
                 st.success('¡Datos actualizados!')
+                st.rerun()
+
+    # --- Mostrar Última Actualización ---
+    try:
+        if env == "prod":
+             engine = get_engine() # Reusamos conexión
+        else:
+             # En dev, a veces engine no está instanciado aquí arriba si no corrió el ETL
+             engine = get_db_engine()
+
+        with engine.connect() as conn:
+            from sqlalchemy import text
+            result = conn.execute(text("SELECT value FROM metadata_etl WHERE key='last_execution'")).fetchone()
+            if result:
+                last_update = result[0]
+                st.sidebar.markdown(f"📅 **Actualizado:** {last_update}")
+            else:
+                 st.sidebar.caption("📅 Actualizado: Desconocido")
+    except Exception:
+        # Si la tabla no existe aún
+        pass
 
 # --- Lógica de Datos ---
 try:

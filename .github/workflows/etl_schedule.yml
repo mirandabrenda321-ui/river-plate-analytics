@@ -26,11 +26,14 @@ jobs:
 
     - name: Run ETL Script
       env:
-        # Load secrets from GitHub Repository Secrets
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_PORT: ${{ secrets.DB_PORT }}
+        ENVIRONMENT: prod
+        # Mapping GitHub Secrets (DB_*) to what database.py expects for PROD (SUPABASE_*)
+        SUPABASE_HOST: ${{ secrets.DB_HOST }}
+        # Note: Start using 'postgres' as DB name for Supabase connection pooling if needed, 
+        # or just pass the secret. database.py forces 'postgres' so we might not need this one, 
+        # but good to have for completeness if logic changes.
+        SUPABASE_USER: ${{ secrets.DB_USER }}
+        SUPABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        SUPABASE_PORT: ${{ secrets.DB_PORT }}
       run: |
         python run_etl.py
